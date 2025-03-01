@@ -1,0 +1,11 @@
+[
+    [
+        {"stage": 1, "cycles": 3, "maxPressure": 0.2, "resetPressure": 0.16, "pressureTime": 180, "breakUpRotations": 3}
+    ],
+    [
+        {"stage": 1, "cycles": 4, "maxPressure": 0.25, "resetPressure": 0.20, "pressureTime": 200, "breakUpRotations": 4}
+    ],
+    [
+        {"stage": 1, "cycles": 5, "maxPressure": 0.3, "resetPressure": 0.22, "pressureTime": 220, "breakUpRotations": 5}
+    ]
+]
