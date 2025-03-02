@@ -21,6 +21,6 @@ TouchScreen - cheap 7 inch.  Not really needed for testing... but nice.
 
 Thats all I have for you right now... I will be back.
 
-Arduino sketch code added - Pretty sure this works.  
+Arduino sketch code added - Pretty sure this works.  Got this from here: https://forum.arduino.cc/t/newbie-1st-project-will-this-work/897563/9
 
 
