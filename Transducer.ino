@@ -1,44 +1,65 @@
-/* This example demonstrates how to take a standard 3-wire pressure transducer
- *  and read the analog signal, then convert the signal to a readable output and
- *  display it onto an LCD screen.
- *  
- *  Contact Tyler at tylerovens@me.com if you have any questions
- */
+/*
+  Pressure Transducer Reading
+  
+  This sketch reads an analog signal from a pressure transducer 
+  and converts it to PSI based on the calibration values:
+  - 0.5V = 0 PSI
+  - 4.5V = 30 PSI
+  
+  The PSI value is printed to the Serial Monitor.
+*/
 
- #include "Wire.h" //allows communication over i2c devices
+// Constants
+const int sensorPin = A0;      // Analog pin where pressure transducer is connected
+const float voltageMin = 0.5;  // Voltage at 0 PSI (0.5V)
+const float voltageMax = 4.5;  // Voltage at max PSI (4.5V)
+const float psiMin = 0.0;      // Minimum PSI reading (0 PSI)
+const float psiMax = 30.0;     // Maximum PSI reading (30 PSI)
 
- const int pressureInput = A0; //select the analog input pin for the pressure transducer
- const int pressureZero = 96.256; //analog reading of pressure transducer at 0psi 102.4=old number
- const int pressureMax = 921.6; //analog reading of pressure transducer at 30psi
- const int pressuretransducermaxPSI = 30; //psi value of transducer being used
- const int baudRate = 9600; //constant integer to set the baud rate for serial monitor
- const int sensorreadDelay = 250; //constant integer to set the sensor read delay in milliseconds
- 
- float pressureValue = 0; //variable to store the value coming from the pressure transducer
- float pressureValueBAR = 0;
- float voltage = 0;
- 
- int pressureInt;
- 
- void setup() //setup routine, runs once when system turned on or reset
- {
-   Serial.begin(baudRate); //initializes serial communication at set baud rate bits per second
-   
- }
- 
- void loop() //loop routine runs over and over again forever
- {
-   pressureValue = analogRead(pressureInput); //reads value from input pin and assigns to variable
-   voltage = (pressureValue*5.0)/1024.0;
-   //Serial.print(voltage, 4);
-   //Serial.println(" volts");
-   pressureValue = ((pressureValue-pressureZero)*pressuretransducermaxPSI)/(pressureMax-pressureZero); //conversion equation to convert analog reading to psi
-   //pressureValueBAR = pressureValue * 0.0689475729;
-   Serial.print(pressureValue, 2); //prints value from previous line to serial
-   pressureInt = int(pressureValue);
-   Serial.write(pressureInt);
-   Serial.println(" psi"); //prints label to serial
-   //Serial.print(pressureValueBAR, 4);
-   //Serial.println(" BAR");
-   delay(sensorreadDelay); //delay in milliseconds between read values
- }
+// Variables
+float sensorValue = 0;  // Value read from the sensor
+float voltage = 0;      // Voltage calculated from sensor reading
+float psi = 0;  // Calculated PSI value
+float bar = 0; 
+
+void setup() {
+  // Initialize serial communication at 9600 bps
+  Serial.begin(9600);
+  //  Serial.println("Pressure Transducer Reading");
+  //  Serial.println("---------------------------");
+  //  Serial.println("Calibration: 0.5V = 0 PSI, 4.5V = 30 PSI");
+  //  Serial.println();
+}
+
+void loop() {
+  // Read the analog value from sensor
+  sensorValue = analogRead(sensorPin);
+  
+  // Convert analog reading (0-1023) to voltage (0-5V)
+  voltage = sensorValue * (5.0 / 1023.0);
+  
+  // Convert voltage to PSI using linear mapping
+  if (voltage <= voltageMin) {
+    psi = psiMin;
+  } else if (voltage >= voltageMax) {
+    psi = psiMax;
+  } else {
+    // Map voltage to PSI using the voltage and PSI ranges
+    psi = psiMin + (psiMax - psiMin) * ((voltage - voltageMin) / (voltageMax - voltageMin));
+    bar = psi * 0.0689476;
+  }
+  
+  // Print the results
+  // Serial.print("Sensor Reading: ");
+  // Serial.print(sensorValue);
+  // Serial.print("\tVoltage: ");
+  // Serial.print(voltage, 2);  // 2 decimal places
+  // Serial.print("V\tPressure: ");
+  // Serial.print(psi, 2);  // 2 decimal places
+  // Serial.println(" PSI");
+  Serial.println(bar, 2);
+  // Serial.println(" Bar");
+  
+  // Wait a bit before taking the next reading
+  delay(250);
+}
